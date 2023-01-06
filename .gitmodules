@@ -1,0 +1,3 @@
+[submodule "leaderboard-api"]
+	path = leaderboard-api
+	url = https://github.com/MithileshHinge/leaderboard-api

@@ -1,0 +1,35 @@
+version: '3.8'
+services:
+    redis:
+        build: ./redis/
+        restart: always
+        ports:
+            - 6379:6379
+        environment:
+            REDIS_PASSWORD: ${REDIS_PASSWORD}
+            REDIS_SET_NAME: ${REDIS_SET_NAME}
+        volumes:
+            - cache:/data
+    api:
+        build: ./leaderboard-api/
+        depends_on:
+            - redis
+        ports:
+            - 3000:3000
+        environment:
+            REDIS_HOST: redis
+            REDIS_PORT: 6379
+            REDIS_PASSWORD: ${REDIS_PASSWORD}
+        command: bash -c "npm run seed:dev && npm run start:dev"
+    frontend:
+        image: node:latest
+        ports:
+            - 8080:8080
+        volumes:
+            - ./leaderboard-frontend:/app
+        working_dir: /app
+        command: bash -c "npm i && npm run serve"
+
+volumes:
+    cache:
+        driver: local
